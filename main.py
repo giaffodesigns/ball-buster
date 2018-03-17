@@ -30,9 +30,9 @@ def main():
     allsprites.add(paddle)
 
     # Create the brick
-    '''brick = Brick()
+    brick = Brick()
     allsprites.add(brick)
-    bricks.add(brick)'''
+    bricks.add(brick)
 
     game_over = False
 
@@ -43,11 +43,9 @@ def main():
                 pygame.quit()
                 sys.exit()
 
-        keys_pressed = pygame.key.get_pressed()
-        if keys_pressed[K_LEFT]:
-            paddle.pos -= paddle.speed
-        if keys_pressed[K_RIGHT]:
-            paddle.pos += paddle.speed
+        # Update object positions on screen
+        if not game_over:
+            paddle.update()
 
         # Main Surface Drawing Functions
         DISPLAYSURF.fill(DARKBLUE)
@@ -67,31 +65,39 @@ class Paddle(pygame.sprite.Sprite):
         self.width = self.image.get_width()
         self.height = self.image.get_height()
 
-        self.pos = (WINDOWWIDTH / 2) + (self.width / 2)
+        self.rect.x = (WINDOWWIDTH / 2) - (self.width / 2)
         self.rect.y = WINDOWHEIGHT - 50
 
     def update(self):
-        self.rect.x = self.pos
+        keys_pressed = pygame.key.get_pressed()
+        if keys_pressed[K_LEFT]:
+            self.rect.x -= self.speed
+        if keys_pressed[K_RIGHT]:
+            self.rect.x += self.speed
+
         # Make sure the paddle doesn't move off the screen
         if self.rect.x > WINDOWWIDTH - self.width:
             self.rect.x = WINDOWWIDTH - self.width
-        elif self.rect.x < WINDOWWIDTH:
-            self.rect.x = WINDOWWIDTH
+        elif self.rect.x < 0:
+            self.rect.x = 0
 
 
 class Brick(pygame.sprite.Sprite):
     speed = 5.0
 
+    x = 0.0
+    y = 180.0
+
+    direction = 200     # Direction of ball (in degrees)
 
     def __init__(self):
         super().__init__()
 
-        self.image = pygame.image.load('brick.png')                       # not set as surface
+        self.image = pygame.image.load('brick.png')
+        self.rect = self.image.get_rect()
+        self.width = self.image.get_width()
+        self.height = self.image.get_height()
 
-        self.direction = 200
-
-        self.x = WINDOWWIDTH / 2
-        self.y = WINDOWHEIGHT - 100
 
 if __name__ == '__main__':
     main()
