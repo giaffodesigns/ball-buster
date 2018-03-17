@@ -11,6 +11,9 @@ WINDOWHEIGHT = 600
 DARKBLUE = (  0,  61, 102)
 RED =      (255,   0,   0)
 
+# Defaults
+PADDLEMAXSPEED = 5
+
 def main():
     global FPSCLOCK, DISPLAYSURF
 
@@ -29,12 +32,14 @@ def main():
     allsprites.add(paddle)
 
     # Create the brick
-    #brick = Brick()
-    #allsprites.add(brick)
+    '''brick = Brick()
+    allsprites.add(brick)'''
 
     # THIS IS JUST A TEST
     ball_image = pygame.image.load('ball.png')
     ball = Ball(ball_image, RED, 200, 200)
+    allsprites.add(ball)
+    ball = Ball(ball_image, DARKBLUE, 300, 300)
     allsprites.add(ball)
     # THIS IS JUST A TEST
 
@@ -57,6 +62,7 @@ def main():
 
         pygame.display.flip()                                                   # draw to surface
         FPSCLOCK.tick(FPS)
+
 
 class Paddle(pygame.sprite.Sprite):
     speed = 5.0
@@ -107,7 +113,13 @@ class Brick(pygame.sprite.Sprite):
     def bounce_x(self):
         self.direction = (180 - self.direction) % 360
     def bounce_y(self, diff):
-        dir = ((180 - self.direction) % 360) % 360
+        self.direction = ((180 - self.direction) % 360) % 360
+        if diff:
+            v_x = math.cos(math.radians(self.direction))
+            v_x = (v_x + (diff * PADDLEMAXSPEED)) / 2
+            self.direction = math.degrees(math.acos(v_x))               # include maximmum horizontal angle later
+
+
 
 
 
@@ -125,7 +137,7 @@ class Ball(pygame.sprite.Sprite):
     def __init__(self, ball_image, color, x_pos, y_pos):
         super().__init__()
 
-        self.image = ball_image
+        self.image = pygame.Surface.copy(ball_image)
         self.image.fill(color, special_flags=BLEND_MULT)
         self.rect = self.image.get_rect()
         self.width = self.image.get_width()
@@ -134,6 +146,11 @@ class Ball(pygame.sprite.Sprite):
 
         self.rect.x = x_pos
         self.rect.y = y_pos
+
+    def drawBalls(self, rows, top):
+        columns = int(WINDOWWIDTH / self.width) - 1
+        margin = (WINDOWWIDTH - (columns * self.width)) / 2
+
 
 if __name__ == '__main__':
     main()
