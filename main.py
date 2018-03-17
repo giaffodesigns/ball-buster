@@ -8,7 +8,8 @@ WINDOWWIDTH = 800
 WINDOWHEIGHT = 600
 
 # Colors
-DARKBLUE = (0, 61, 102)
+DARKBLUE = (  0,  61, 102)
+RED =      (255,   0,   0)
 
 def main():
     global FPSCLOCK, DISPLAYSURF
@@ -21,8 +22,6 @@ def main():
     FONT = pygame.font.Font(None, 24)
 
     # Create sprite lists
-    balls = pygame.sprite.Group()
-    bricks = pygame.sprite.Group()
     allsprites = pygame.sprite.Group()
 
     # Create the player paddle
@@ -30,9 +29,14 @@ def main():
     allsprites.add(paddle)
 
     # Create the brick
-    brick = Brick()
-    allsprites.add(brick)
-    bricks.add(brick)
+    #brick = Brick()
+    #allsprites.add(brick)
+
+    # THIS IS JUST A TEST
+    ball_image = pygame.image.load('ball.png')
+    ball = Ball(ball_image, RED, 200, 200)
+    allsprites.add(ball)
+    # THIS IS JUST A TEST
 
     game_over = False
 
@@ -56,6 +60,8 @@ def main():
 
 class Paddle(pygame.sprite.Sprite):
     speed = 5.0
+
+    bounce_mult = 3         # multiple used to change angle of brick when hitting paddle
 
     def __init__(self):
         super().__init__()
@@ -85,9 +91,6 @@ class Paddle(pygame.sprite.Sprite):
 class Brick(pygame.sprite.Sprite):
     speed = 5.0
 
-    x = 0.0
-    y = 180.0
-
     direction = 200     # Direction of ball (in degrees)
 
     def __init__(self):
@@ -98,6 +101,39 @@ class Brick(pygame.sprite.Sprite):
         self.width = self.image.get_width()
         self.height = self.image.get_height()
 
+        self.rect.x = WINDOWWIDTH / 2
+        self.rect.y = WINDOWHEIGHT - 100
+
+    def bounce_x(self):
+        self.direction = (180 - self.direction) % 360
+    def bounce_y(self, diff):
+        dir = ((180 - self.direction) % 360) % 360
+
+
+
+
+    def update(self):
+
+
+        if self.rect.y >= WINDOWWIDTH:
+            return False
+        else:
+            return True
+
+
+class Ball(pygame.sprite.Sprite):
+    def __init__(self, ball_image, color, x_pos, y_pos):
+        super().__init__()
+
+        self.image = ball_image
+        self.image.fill(color, special_flags=BLEND_MULT)
+        self.rect = self.image.get_rect()
+        self.width = self.image.get_width()
+        self.height = self.image.get_height()
+
+
+        self.rect.x = x_pos
+        self.rect.y = y_pos
 
 if __name__ == '__main__':
     main()
