@@ -1,6 +1,7 @@
 import pygame
 import sys
 import math
+import random
 from pygame.locals import *
 
 FPS = 60
@@ -8,11 +9,20 @@ WINDOWWIDTH = 800
 WINDOWHEIGHT = 600
 
 # Colors
-DARKBLUE = (  0,  61, 102)
-RED =      (255,   0,   0)
+RED      = (255,   0,   0)
+GREEN    = (  0, 255,   0)
+BLUE     = (  0,   0, 255)
+YELLOW   = (255, 255,   0)
+MAGENTA  = (255,   0, 255)
+CYAN     = (  0, 255, 255)
+BLACK    = (  0,   0,   0)
+GRAY     = (128, 128, 128)
+WHITE    = (255, 255, 255)
+DARKBLUE = (  0,   0, 128)
 
 # Defaults
 PADDLEMAXSPEED = 5
+RANDOMCOLORS = (RED, GREEN, BLUE, YELLOW, MAGENTA, CYAN, GRAY, WHITE)
 
 def main():
     global FPSCLOCK, DISPLAYSURF
@@ -35,13 +45,26 @@ def main():
     '''brick = Brick()
     allsprites.add(brick)'''
 
-    # THIS IS JUST A TEST
+    # Create the balls
     ball_image = pygame.image.load('ball.png')
-    ball = Ball(ball_image, RED, 200, 200)
-    allsprites.add(ball)
-    ball = Ball(ball_image, DARKBLUE, 300, 300)
-    allsprites.add(ball)
-    # THIS IS JUST A TEST
+    columns_wide = int(WINDOWWIDTH / ball_image.get_width()) - 1 # Set the number of balls for a wide row
+    columns_narrow = columns_wide - 1 # Set the number of balls for a narrow row
+    margin_wide = (WINDOWWIDTH - (columns_wide * ball_image.get_width())) / 2 # Center the wide rows
+    margin_narrow = (WINDOWWIDTH - (columns_narrow * ball_image.get_width())) / 2 # Center the narrow rows
+    top = 20 # Set the top y coordinate of the first row
+    rows = 5 # Set number of rows
+    # Create the rows, in alternating wide and narrow rows, with random colors for the balls, then add them to the allsprites list
+    for i in range(rows):
+        if rows % 2 == 0:
+            for j in range (columns_wide):
+                ball = Ball(ball_image, RANDOMCOLORS[random.randint(0, len(RANDOMCOLORS) - 1)], (j * ball_image.get_width() + margin_wide), top)
+                allsprites.add(ball)
+        else:
+            for k in range (columns_narrow):
+                ball = Ball(ball_image, RANDOMCOLORS[random.randint(0, len(RANDOMCOLORS) - 1)], (k * ball_image.get_width() + margin_narrow), top)
+                allsprites.add(ball)
+        top += ball_image.get_height()
+        rows -= 1
 
     game_over = False
 
@@ -143,13 +166,8 @@ class Ball(pygame.sprite.Sprite):
         self.width = self.image.get_width()
         self.height = self.image.get_height()
 
-
         self.rect.x = x_pos
         self.rect.y = y_pos
-
-    def drawBalls(self, rows, top):
-        columns = int(WINDOWWIDTH / self.width) - 1
-        margin = (WINDOWWIDTH - (columns * self.width)) / 2
 
 
 if __name__ == '__main__':
