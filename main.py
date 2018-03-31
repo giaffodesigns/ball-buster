@@ -5,8 +5,8 @@ import random
 from pygame.locals import *
 
 FPS = 60
-WINDOWWIDTH = 800
-WINDOWHEIGHT = 600
+WINDOWWIDTH = 400
+WINDOWHEIGHT = 500
 
 # Colors
 RED      = (255,   0,   0)
@@ -35,7 +35,7 @@ def main():
     pygame.display.set_caption('Ball Breaker')
 
     # Initialize fonts
-    FONTLARGE = pygame.font.Font("SuperMario256.ttf", 32)
+    FONTLARGE = pygame.font.Font("SuperMario256.ttf", 48)
     FONTSMALL = pygame.font.Font("SuperMario256.ttf", 16)
 
     # Initialize score
@@ -97,11 +97,28 @@ def main():
         if not game_over:
             # Update the positions of objects on the screen
             paddle.update()
-            brick.update()
+            game_over = brick.update()      # update brick position; ends game if brick falls off screen
 
             # ball bounce
+            ballskilled = pygame.sprite.spritecollide(brick, balls, True)
+            for ball in ballskilled: # Check the list of colliding sprites, and add one to the score for each one
+                score += 1
+            # If we actually hit a block, bounce the ball
+            if len(ballskilled) > 0:
+                bouncedirection = get_bounce_direction(ballskilled[0], brick)
+                print (bouncedirection)
+                if bouncedirection == 1:
+                    brick.bounce_x()
+                elif bouncedirection == 0:
+                    brick.bounce_y()
+                # Game ends if all the blocks are gone
+                if len(balls) == 0:
+                    game_over = True
 
             # paddle bounce
+            if pygame.sprite.spritecollide(paddle, bricks, False):
+                brick.bounce_paddle(paddle)
+
 
 
             # Update the score display
@@ -110,10 +127,10 @@ def main():
 
         # If the player loses
         if game_over:
-            text = FONTLARGE.render("Game Over", True, RED)
-            textpos = text.get_rect(centerx = DISPLAYSURF.get_width()/2)
-            textpos.top = 300
-            DISPLAYSURF.blit(text, textpos)
+            text = FONTLARGE.render("Game Over", True, WHITE)
+            text_x = (WINDOWWIDTH / 2) - (text.get_width() / 2)
+            text_y = (WINDOWHEIGHT / 2) - (text.get_height() / 2)
+            DISPLAYSURF.blit(text, (text_x, text_y))
 
         # Main Surface Drawing Functions
         allsprites.draw(DISPLAYSURF)
@@ -126,8 +143,28 @@ def main():
 
 
 
+#### INTERNAL FUNCTIONS ####
+def range_percent(low, high, ref, force_range=False):
+    # takes two numbers as a range and the object being analyzed and returns
+    # the object's position between the two, with 0.000 being the low number and 1.000 being the high number
+    offset = min(low, high)
+    percent = (ref-offset)/(high-offset)
+    # print(percent)                                                                                                         # TROUBLESHOOT
+    if force_range == True:
+        if percent > 1: percent = 1
+        if percent < 0: percent = 0
+    return percent
 
 
+def get_bounce_direction(ball, brick):
+    # brick moving to left
+    if ball.rect.right >= brick.rect.left >= ball.rect.right - brick.speed:
+        return 1
+    # brick moving to right
+    elif ball.rect.left <= brick.rect.right <= ball.rect.left + brick.speed:
+        return 1
+    else:
+        return 0
 
 
 
@@ -165,7 +202,7 @@ class Paddle(pygame.sprite.Sprite):
 class Brick(pygame.sprite.Sprite):
     speed = 5.0
 
-    direction = 45     # Direction of ball (in degrees)
+    direction = -35    # Direction of ball (in degrees)
 
     def __init__(self):
         super().__init__()
@@ -177,50 +214,74 @@ class Brick(pygame.sprite.Sprite):
 
         self.rect.x = WINDOWWIDTH / 2
         self.rect.y = WINDOWHEIGHT - 100
+        # self.rect.x = 0
+
 
         self.angle_limit = 20                                              # most shallow angle ball can bounce off paddle at
-        self.paddle_range = (180-self.angle_limit, self.angle_limit)
+        self.paddle_range = (180+self.angle_limit, 360-self.angle_limit)
 
-    def bounce_y(self):
-        self.direction = (180 - self.direction) % 360
     def bounce_x(self):
+        self.direction = (180 - self.direction) % 360
+        # print('current angle: ' + str(self.direction))                                                                                               # TROUBLESHOOT
+    def bounce_y(self):
         self.direction = (360 - self.direction) % 360
+        # print('current angle: ' + str(self.direction))                                                                                               # TROUBLESHOOT
 
         # v_x = math.cos(math.radians(self.direction))
         # v_x = (v_x + (diff * PADDLEMAXSPEED)) / 2
         # self.direction = math.degrees(math.acos(v_x))               # include maximum horizontal angle later
-    def bounce_paddle(self, partial):
+    def bounce_paddle(self, paddle_obj):
         # partial expressed as a number between 0 ant 100 expressing a percentage along the paddle's hit range from left to right
-        r = self.paddle_range
-        if r[1] > r[2]:
-            partial = abs(100-partial)      # invert percentage if provided range starts with larger angle number first
-        partial = partial/100
+        brick_cent = self.rect.x + (self.width/2)
+        partial = range_percent(paddle_obj.rect.x, paddle_obj.rect.x + paddle_obj.width, brick_cent, True)        # find position of brick along paddle's full length
 
-        t = []
+
+        r = self.paddle_range
+        if r[0] > r[1]:
+            partial = abs(1-partial)      # invert percentage if provided range starts with larger angle number first
+
+        t = list(r)
+        offset = min(r)
         for i in range(len(r)):
             t[i] = r[i] - min(r)
 
         new = max(t) * partial
-        self.direction = new + min(r)
+
+        print('percent: ' + str(partial), 'new angle: ' + str(new + offset))                                                                        # TROUBLESHOOT
+        self.direction = new + offset
+        self.rect.bottom = paddle_obj.rect.top - 1             # reposition block to be above paddle and out of collision box
+        print('current angle: ' + str(self.direction))                                                                                    # TROUBLESHOOT
 
 
 
     def update(self):
         """ Update the position of the ball. """
         # Sine and Cosine work in degrees, so we have to convert them
-        direction_radians = math.radians(self.direction)
+        direction_radians = math.radians(self.direction + 90)
+        fall = False
 
         # Change the position (x and y) according to the speed and direction
         self.rect.x += self.speed * math.sin(direction_radians)
         self.rect.y -= self.speed * math.cos(direction_radians)
 
-        if self.rect.x >= WINDOWWIDTH - self.width or self.rect.x <= 0: # Bounce off side walls
+        if self.rect.right >= WINDOWWIDTH:              # bounce off right wall
             self.bounce_x()
+            self.rect.right = WINDOWWIDTH - 1
+        elif self.rect.left <= 0:                       # bounce off left wall
+            self.bounce_x()
+            self.rect.left = 1
+
+
+         # self.width or self.rect.x <= 0: # Bounce off side walls
+         #    self.bounce_x()
 
         if self.rect.y <= 0:
             self.bounce_y()
         elif self.rect.y >= WINDOWHEIGHT:           # return if below window for game over signal
-            return True
+            fall = True
+
+        return fall
+
 
 
 class Ball(pygame.sprite.Sprite):
