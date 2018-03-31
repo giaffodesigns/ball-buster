@@ -55,7 +55,7 @@ def main():
     rows = 5 # Set number of rows
     # Create the rows, in alternating wide and narrow rows, with random colors for the balls, then add them to the allsprites list
     for i in range(rows):
-        if rows % 2 == 0:
+        if i % 2 == 0:
             for j in range (columns_wide):
                 ball = Ball(ball_image, RANDOMCOLORS[random.randint(0, len(RANDOMCOLORS) - 1)], (j * ball_image.get_width() + margin_wide), top)
                 allsprites.add(ball)
@@ -64,7 +64,6 @@ def main():
                 ball = Ball(ball_image, RANDOMCOLORS[random.randint(0, len(RANDOMCOLORS) - 1)], (k * ball_image.get_width() + margin_narrow), top)
                 allsprites.add(ball)
         top += ball_image.get_height()
-        rows -= 1
 
     game_over = False
 
