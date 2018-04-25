@@ -1,0 +1,6 @@
+brick0.png
+brick1.png
+brick2.png
+brick3.png
+paddle.png
+ball.png
