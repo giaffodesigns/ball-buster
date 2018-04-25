@@ -16,10 +16,10 @@ WHITE    = (255, 255, 255)
 
 bricks = pygame.sprite.Group()
 brick_image = [
-    pygame.image.load('brick0.png'),
-    pygame.image.load('brick1.png'),
-    pygame.image.load('brick2.png'),
-    pygame.image.load('brick3.png'),
+    pygame.image.load('sprites/brick0.png'),
+    pygame.image.load('sprites/brick1.png'),
+    pygame.image.load('sprites/brick2.png'),
+    pygame.image.load('sprites/brick3.png'),
 ]
 
 brick_props = [
