@@ -56,26 +56,29 @@ def main():
     balls.add(ball)
 
     # Create the bricks
-    brick_image = pygame.image.load("sprites/brick0.png")
-    columns_wide = int(WINDOWWIDTH / brick_image.get_width()) - 1 # Set the number of balls for a wide row
-    columns_narrow = columns_wide - 1 # Set the number of balls for a narrow row
-    margin_wide = (WINDOWWIDTH - (columns_wide * brick_image.get_width())) / 2 # Center the wide rows
-    margin_narrow = (WINDOWWIDTH - (columns_narrow * brick_image.get_width())) / 2 # Center the narrow rows
-    top = 50 # Set the top y coordinate of the first row
-    rows = 5 # Set number of rows
-    # Create the rows, in alternating wide and narrow rows, with random colors for the balls, then add them to the allsprites list
-    for i in range(rows):
-        if i % 2 == 0:
-            for j in range (columns_wide):
-                brick = Brick(brick_image, RANDOMCOLORS[random.randint(0, len(RANDOMCOLORS) - 1)], (j * brick_image.get_width() + margin_wide), top)
-                allsprites.add(brick)
-                bricks.add(brick)
-        else:
-            for k in range (columns_narrow):
-                brick = Brick(brick_image, RANDOMCOLORS[random.randint(0, len(RANDOMCOLORS) - 1)], (k * brick_image.get_width() + margin_narrow), top)
-                allsprites.add(brick)
-                bricks.add(brick)
-        top += brick_image.get_height()
+    with open("levels/samplelevel.lvl") as f:
+        bricks = f.read().splitlines()
+
+    # brick_image = pygame.image.load("sprites/brick0.png")
+    # columns_wide = int(WINDOWWIDTH / brick_image.get_width()) - 1 # Set the number of balls for a wide row
+    # columns_narrow = columns_wide - 1 # Set the number of balls for a narrow row
+    # margin_wide = (WINDOWWIDTH - (columns_wide * brick_image.get_width())) / 2 # Center the wide rows
+    # margin_narrow = (WINDOWWIDTH - (columns_narrow * brick_image.get_width())) / 2 # Center the narrow rows
+    # top = 50 # Set the top y coordinate of the first row
+    # rows = 5 # Set number of rows
+    # # Create the rows, in alternating wide and narrow rows, with random colors for the balls, then add them to the allsprites list
+    # for i in range(rows):
+    #     if i % 2 == 0:
+    #         for j in range (columns_wide):
+    #             brick = Brick(brick_image, RANDOMCOLORS[random.randint(0, len(RANDOMCOLORS) - 1)], (j * brick_image.get_width() + margin_wide), top)
+    #             allsprites.add(brick)
+    #             bricks.add(brick)
+    #     else:
+    #         for k in range (columns_narrow):
+    #             brick = Brick(brick_image, RANDOMCOLORS[random.randint(0, len(RANDOMCOLORS) - 1)], (k * brick_image.get_width() + margin_narrow), top)
+    #             allsprites.add(brick)
+    #             bricks.add(brick)
+    #     top += brick_image.get_height()
 
     game_over = False
 
