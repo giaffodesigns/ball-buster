@@ -50,5 +50,8 @@ class Brick(pygame.sprite.Sprite):
         self.width = self.image.get_width()
         self.height = self.image.get_height()
 
+        self.type = type
+        self.health = props[2]
+
         self.rect.x = x_pos
         self.rect.y = y_pos
