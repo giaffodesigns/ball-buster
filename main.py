@@ -3,6 +3,7 @@ import sys
 import math
 import random
 from pygame.locals import *
+from bricks import *
 
 FPS = 60
 WINDOWWIDTH = 800
