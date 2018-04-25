@@ -1,0 +1,7 @@
+# Bricks in the list are defined with the following data points: [bricktype, x, y]
+bricks = [
+    [0, 50, 50],
+    [0, 150, 150],
+    [0, 150, 50],
+    [0, 300, 50]
+]
