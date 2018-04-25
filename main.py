@@ -40,38 +40,21 @@ def main():
     balls.add(ball)
 
     # Create the bricks
+    # Open the level file and read it line by line
     with open("levels/samplelevel.lvl") as f:
         bricklist = f.read().splitlines()
-    f.close()
+    f.close() # Close the level file so it's not taking up memory
 
+    # Convert the list values to integers (they are currently strings)
     for i in range(len(bricklist)):
         bricklist[i] = [int(j) for j in bricklist[i].split()]
 
-    # brick_image = pygame.image.load("sprites/brick0.png")
-
+    # Create each brick from the level file, passing the arguments [bricktype, x, y]
+    # Add those bricks to the "bricks" sprite list
     for i in range(len(bricklist)):
         brick = Brick(bricklist[i][0], bricklist[i][1], bricklist[i][2])
         allsprites.add(brick)
         bricks.add(brick)
-    # columns_wide = int(WINDOWWIDTH / brick_image.get_width()) - 1 # Set the number of balls for a wide row
-    # columns_narrow = columns_wide - 1 # Set the number of balls for a narrow row
-    # margin_wide = (WINDOWWIDTH - (columns_wide * brick_image.get_width())) / 2 # Center the wide rows
-    # margin_narrow = (WINDOWWIDTH - (columns_narrow * brick_image.get_width())) / 2 # Center the narrow rows
-    # top = 50 # Set the top y coordinate of the first row
-    # rows = 5 # Set number of rows
-    # # Create the rows, in alternating wide and narrow rows, with random colors for the balls, then add them to the allsprites list
-    # for i in range(rows):
-    #     if i % 2 == 0:
-    #         for j in range (columns_wide):
-    #             brick = Brick(brick_image, RANDOMCOLORS[random.randint(0, len(RANDOMCOLORS) - 1)], (j * brick_image.get_width() + margin_wide), top)
-    #             allsprites.add(brick)
-    #             bricks.add(brick)
-    #     else:
-    #         for k in range (columns_narrow):
-    #             brick = Brick(brick_image, RANDOMCOLORS[random.randint(0, len(RANDOMCOLORS) - 1)], (k * brick_image.get_width() + margin_narrow), top)
-    #             allsprites.add(brick)
-    #             bricks.add(brick)
-    #     top += brick_image.get_height()
 
     game_over = False
 
@@ -277,21 +260,6 @@ class Ball(pygame.sprite.Sprite):
             fall = True
 
         return fall
-
-
-
-# class Brick(pygame.sprite.Sprite):
-#     def __init__(self, brick_image, color, x_pos, y_pos):
-#         super().__init__()
-#
-#         self.image = pygame.Surface.copy(brick_image)
-#         self.image.fill(color, special_flags=BLEND_MULT)
-#         self.rect = self.image.get_rect()
-#         self.width = self.image.get_width()
-#         self.height = self.image.get_height()
-#
-#         self.rect.x = x_pos
-#         self.rect.y = y_pos
 
 
 if __name__ == '__main__':
