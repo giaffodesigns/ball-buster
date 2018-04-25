@@ -3,16 +3,7 @@ import sys
 import math
 import random
 from pygame.locals import *
-
-RED      = (255,   0,   0)
-GREEN    = (  0, 255,   0)
-BLUE     = (  0,   0, 255)
-YELLOW   = (255, 255,   0)
-MAGENTA  = (255,   0, 255)
-CYAN     = (  0, 255, 255)
-BLACK    = (  0,   0,   0)
-GRAY     = (128, 128, 128)
-WHITE    = (255, 255, 255)
+from colors import *
 
 bricks = pygame.sprite.Group()
 brick_image = [
@@ -32,7 +23,7 @@ brick_props = [
     [0, MAGENTA, 1],        #5
     [0, YELLOW, 1],         #6
     [0, BLACK, 1],          #7
-    [0, GREY, 1],           #8
+    [0, GRAY, 1],           #8
 ]
 
 
