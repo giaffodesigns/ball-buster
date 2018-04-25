@@ -5,8 +5,8 @@ import random
 from pygame.locals import *
 
 FPS = 60
-WINDOWWIDTH = 400
-WINDOWHEIGHT = 500
+WINDOWWIDTH = 800
+WINDOWHEIGHT = 600
 
 # Colors
 RED      = (255,   0,   0)
@@ -35,8 +35,8 @@ def main():
     pygame.display.set_caption('Ball Breaker')
 
     # Initialize fonts
-    FONTLARGE = pygame.font.Font("SuperMario256.ttf", 48)
-    FONTSMALL = pygame.font.Font("SuperMario256.ttf", 16)
+    FONTLARGE = pygame.font.Font("RussoOne-Regular.ttf", 60)
+    FONTSMALL = pygame.font.Font("RussoOne-Regular.ttf", 20)
 
     # Initialize score
     score = 0
@@ -50,32 +50,32 @@ def main():
     paddle = Paddle()
     allsprites.add(paddle)
 
-    # Create the brick
-    brick = Brick()
-    allsprites.add(brick)
-    bricks.add(brick)
+    # Create the ball
+    ball = Ball()
+    allsprites.add(ball)
+    balls.add(ball)
 
-    # Create the balls
-    ball_image = pygame.image.load('ball.png')
-    columns_wide = int(WINDOWWIDTH / ball_image.get_width()) - 1 # Set the number of balls for a wide row
+    # Create the bricks
+    brick_image = pygame.image.load("sprites/brick0.png")
+    columns_wide = int(WINDOWWIDTH / brick_image.get_width()) - 1 # Set the number of balls for a wide row
     columns_narrow = columns_wide - 1 # Set the number of balls for a narrow row
-    margin_wide = (WINDOWWIDTH - (columns_wide * ball_image.get_width())) / 2 # Center the wide rows
-    margin_narrow = (WINDOWWIDTH - (columns_narrow * ball_image.get_width())) / 2 # Center the narrow rows
-    top = 30 # Set the top y coordinate of the first row
+    margin_wide = (WINDOWWIDTH - (columns_wide * brick_image.get_width())) / 2 # Center the wide rows
+    margin_narrow = (WINDOWWIDTH - (columns_narrow * brick_image.get_width())) / 2 # Center the narrow rows
+    top = 50 # Set the top y coordinate of the first row
     rows = 5 # Set number of rows
     # Create the rows, in alternating wide and narrow rows, with random colors for the balls, then add them to the allsprites list
     for i in range(rows):
         if i % 2 == 0:
             for j in range (columns_wide):
-                ball = Ball(ball_image, RANDOMCOLORS[random.randint(0, len(RANDOMCOLORS) - 1)], (j * ball_image.get_width() + margin_wide), top)
-                allsprites.add(ball)
-                balls.add(ball)
+                brick = Brick(brick_image, RANDOMCOLORS[random.randint(0, len(RANDOMCOLORS) - 1)], (j * brick_image.get_width() + margin_wide), top)
+                allsprites.add(brick)
+                bricks.add(brick)
         else:
             for k in range (columns_narrow):
-                ball = Ball(ball_image, RANDOMCOLORS[random.randint(0, len(RANDOMCOLORS) - 1)], (k * ball_image.get_width() + margin_narrow), top)
-                allsprites.add(ball)
-                balls.add(ball)
-        top += ball_image.get_height()
+                brick = Brick(brick_image, RANDOMCOLORS[random.randint(0, len(RANDOMCOLORS) - 1)], (k * brick_image.get_width() + margin_narrow), top)
+                allsprites.add(brick)
+                bricks.add(brick)
+        top += brick_image.get_height()
 
     game_over = False
 
@@ -97,27 +97,27 @@ def main():
         if not game_over:
             # Update the positions of objects on the screen
             paddle.update()
-            game_over = brick.update()      # update brick position; ends game if brick falls off screen
+            game_over = ball.update()      # update brick position; ends game if brick falls off screen
 
             # ball bounce
-            ballskilled = pygame.sprite.spritecollide(brick, balls, True)
-            for ball in ballskilled: # Check the list of colliding sprites, and add one to the score for each one
+            brickskilled = pygame.sprite.spritecollide(ball, bricks, True)
+            for brick in brickskilled: # Check the list of colliding sprites, and add one to the score for each one
                 score += 1
             # If we actually hit a block, bounce the ball
-            if len(ballskilled) > 0:
-                bouncedirection = get_bounce_direction(ballskilled[0], brick)
+            if len(brickskilled) > 0:
+                bouncedirection = get_bounce_direction(brickskilled[0], ball)
                 print (bouncedirection)
                 if bouncedirection == 1:
-                    brick.bounce_x()
+                    ball.bounce_x()
                 elif bouncedirection == 0:
-                    brick.bounce_y()
+                    ball.bounce_y()
                 # Game ends if all the blocks are gone
-                if len(balls) == 0:
+                if len(bricks) == 0:
                     game_over = True
 
             # paddle bounce
-            if pygame.sprite.spritecollide(paddle, bricks, False):
-                brick.bounce_paddle(paddle)
+            if pygame.sprite.spritecollide(paddle, balls, False):
+                ball.bounce_paddle(paddle)
 
 
 
@@ -177,7 +177,7 @@ class Paddle(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
 
-        self.image = pygame.image.load('paddle.png')
+        self.image = pygame.image.load("sprites/paddle.png")
         self.rect = self.image.get_rect()
         self.width = self.image.get_width()
         self.height = self.image.get_height()
@@ -199,7 +199,7 @@ class Paddle(pygame.sprite.Sprite):
             self.rect.x = 0
 
 
-class Brick(pygame.sprite.Sprite):
+class Ball(pygame.sprite.Sprite):
     speed = 5.0
 
     direction = -35    # Direction of ball (in degrees)
@@ -207,7 +207,7 @@ class Brick(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
 
-        self.image = pygame.image.load('brick.png')
+        self.image = pygame.image.load("sprites/ball.png")
         self.rect = self.image.get_rect()
         self.width = self.image.get_width()
         self.height = self.image.get_height()
@@ -284,11 +284,11 @@ class Brick(pygame.sprite.Sprite):
 
 
 
-class Ball(pygame.sprite.Sprite):
-    def __init__(self, ball_image, color, x_pos, y_pos):
+class Brick(pygame.sprite.Sprite):
+    def __init__(self, brick_image, color, x_pos, y_pos):
         super().__init__()
 
-        self.image = pygame.Surface.copy(ball_image)
+        self.image = pygame.Surface.copy(brick_image)
         self.image.fill(color, special_flags=BLEND_MULT)
         self.rect = self.image.get_rect()
         self.width = self.image.get_width()
