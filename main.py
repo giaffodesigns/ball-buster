@@ -3,7 +3,7 @@ import sys
 import math
 import random
 from pygame.locals import *
-from bricks import *
+# from bricks import *
 
 FPS = 60
 WINDOWWIDTH = 800
@@ -58,16 +58,18 @@ def main():
 
     # Create the bricks
     with open("levels/samplelevel.lvl") as f:
-        bricks = f.read().splitlines()
+        bricklist = f.read().splitlines()
     f.close()
 
-    print(bricks)
+    for i in range(len(bricklist)):
+        bricklist[i] = [int(j) for j in bricklist[i].split()]
 
-    for i in range(0, len(bricks)):
-        bricks[i] = [int(j) for j in bricks[i].split()]
-        print(bricks[i])
+    brick_image = pygame.image.load("sprites/brick0.png")
 
-    # brick_image = pygame.image.load("sprites/brick0.png")
+    for i in range(len(bricklist)):
+        brick = Brick(brick_image, RANDOMCOLORS[random.randint(0, len(RANDOMCOLORS) - 1)], bricklist[i][1], bricklist[i][2])
+        allsprites.add(brick)
+        bricks.add(brick)
     # columns_wide = int(WINDOWWIDTH / brick_image.get_width()) - 1 # Set the number of balls for a wide row
     # columns_narrow = columns_wide - 1 # Set the number of balls for a narrow row
     # margin_wide = (WINDOWWIDTH - (columns_wide * brick_image.get_width())) / 2 # Center the wide rows
