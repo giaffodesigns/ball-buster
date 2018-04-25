@@ -3,7 +3,7 @@ import sys
 import math
 import random
 from pygame.locals import *
-from colors import *
+from constants import *
 
 bricks = pygame.sprite.Group()
 brick_image = [

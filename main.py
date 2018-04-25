@@ -4,15 +4,9 @@ import math
 import random
 from pygame.locals import *
 from bricks import *
-from colors import *
+from constants import *
 
-FPS = 60
-WINDOWWIDTH = 800
-WINDOWHEIGHT = 600
 
-# Defaults
-PADDLEMAXSPEED = 5
-RANDOMCOLORS = (RED, GREEN, BLUE, YELLOW, MAGENTA, CYAN, GRAY, WHITE)
 
 
 ######## MAIN GAME FUNCTION ########
@@ -53,10 +47,10 @@ def main():
     for i in range(len(bricklist)):
         bricklist[i] = [int(j) for j in bricklist[i].split()]
 
-    brick_image = pygame.image.load("sprites/brick0.png")
+    # brick_image = pygame.image.load("sprites/brick0.png")
 
     for i in range(len(bricklist)):
-        brick = Brick(brick_image, RANDOMCOLORS[random.randint(0, len(RANDOMCOLORS) - 1)], bricklist[i][1], bricklist[i][2])
+        brick = Brick(bricklist[i][0], bricklist[i][1], bricklist[i][2])
         allsprites.add(brick)
         bricks.add(brick)
     # columns_wide = int(WINDOWWIDTH / brick_image.get_width()) - 1 # Set the number of balls for a wide row
@@ -286,18 +280,18 @@ class Ball(pygame.sprite.Sprite):
 
 
 
-class Brick(pygame.sprite.Sprite):
-    def __init__(self, brick_image, color, x_pos, y_pos):
-        super().__init__()
-
-        self.image = pygame.Surface.copy(brick_image)
-        self.image.fill(color, special_flags=BLEND_MULT)
-        self.rect = self.image.get_rect()
-        self.width = self.image.get_width()
-        self.height = self.image.get_height()
-
-        self.rect.x = x_pos
-        self.rect.y = y_pos
+# class Brick(pygame.sprite.Sprite):
+#     def __init__(self, brick_image, color, x_pos, y_pos):
+#         super().__init__()
+#
+#         self.image = pygame.Surface.copy(brick_image)
+#         self.image.fill(color, special_flags=BLEND_MULT)
+#         self.rect = self.image.get_rect()
+#         self.width = self.image.get_width()
+#         self.height = self.image.get_height()
+#
+#         self.rect.x = x_pos
+#         self.rect.y = y_pos
 
 
 if __name__ == '__main__':
