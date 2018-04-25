@@ -59,6 +59,13 @@ def main():
     # Create the bricks
     with open("levels/samplelevel.lvl") as f:
         bricks = f.read().splitlines()
+    f.close()
+
+    print(bricks)
+
+    for i in range(0, len(bricks)):
+        bricks[i] = [int(j) for j in bricks[i].split()]
+        print(bricks[i])
 
     # brick_image = pygame.image.load("sprites/brick0.png")
     # columns_wide = int(WINDOWWIDTH / brick_image.get_width()) - 1 # Set the number of balls for a wide row
