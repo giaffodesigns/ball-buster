@@ -7,8 +7,6 @@ from bricks import *
 from constants import *
 
 
-
-
 ######## MAIN GAME FUNCTION ########
 def main():
     global FPSCLOCK, DISPLAYSURF
@@ -76,7 +74,7 @@ def main():
         if not game_over:
             # Update the positions of objects on the screen
             paddle.update()
-            game_over = ball.update()      # update brick position; ends game if brick falls off screen
+            game_over = ball.update()      # update ball position; ends game if ball falls off screen
 
             # ball bounce
             brickskilled = pygame.sprite.spritecollide(ball, bricks, True)
@@ -103,6 +101,8 @@ def main():
             # Update the score display
             scoretext = FONTSMALL.render("Score: " + str(score), True, WHITE)
             DISPLAYSURF.blit(scoretext, (10, 10))
+            livestext = FONTSMALL.render("Balls Remaining: " + str(ball.lives), True, WHITE)
+            DISPLAYSURF.blit(livestext, (WINDOWWIDTH - livestext.get_width() - 10, 10))
 
         # If the player loses
         if game_over:
@@ -195,6 +195,7 @@ class Ball(pygame.sprite.Sprite):
         self.rect.y = WINDOWHEIGHT - 100
         # self.rect.x = 0
 
+        self.lives = STARTINGLIVES
 
         self.angle_limit = 20                                              # most shallow angle ball can bounce off paddle at
         self.paddle_range = (180+self.angle_limit, 360-self.angle_limit)
@@ -237,7 +238,7 @@ class Ball(pygame.sprite.Sprite):
         """ Update the position of the ball. """
         # Sine and Cosine work in degrees, so we have to convert them
         direction_radians = math.radians(self.direction + 90)
-        fall = False
+        out_of_lives = False
 
         # Change the position (x and y) according to the speed and direction
         self.rect.x += self.speed * math.sin(direction_radians)
@@ -257,9 +258,15 @@ class Ball(pygame.sprite.Sprite):
         if self.rect.y <= 0:
             self.bounce_y()
         elif self.rect.y >= WINDOWHEIGHT:           # return if below window for game over signal
-            fall = True
+            self.lives -= 1
+            if self.lives > 0:
+                self.direction = -35
+                self.rect.x = WINDOWWIDTH / 2
+                self.rect.y = WINDOWHEIGHT - 100
+            elif self.lives == 0:
+                out_of_lives = True
 
-        return fall
+        return out_of_lives
 
 
 if __name__ == '__main__':
