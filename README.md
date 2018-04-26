@@ -20,7 +20,7 @@ There is no installation process as of right now. Simply download the master bra
 
 ## Authors
 * **Jason Giaffo** - *Programming*
-* **Josh Salazar** - *Programming & Asset Design*
+* **Josh Salazar** - *Programming*
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
