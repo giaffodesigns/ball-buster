@@ -27,3 +27,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 * Brick, ball, and paddle graphics by [Kenney Vleugels](www.kenney.nl), via [OpenGameArt.org](https://opengameart.org/content/puzzle-game-art)
+* Font by [Jovanny Lemonad](jovanny.ru) under the [SIL Open Font License v1.1](http://scripts.sil.org/OFL)
